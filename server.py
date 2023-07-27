@@ -10,15 +10,16 @@ from flask import Flask, redirect, request
 import stripe
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
-stripe.api_key = 'sk_test_51NW1PkFzSGyLRwvafdwgz5ZyvxALRyutjJuLza829nV7T0bZdciLPtsSpMGpLU16nADkeRL3AHhTtOxuMugz3ZMo002caBBGA1'
+stripe.api_key = os.environ.get('STRIPE_TEST_KEY')
 
 app = Flask(__name__,
             static_url_path='',
             static_folder='public')
 
-YOUR_DOMAIN = 'http://localhost:3000'
+YOUR_DOMAIN = 'http://localhost:4242'
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
@@ -32,8 +33,8 @@ def create_checkout_session():
                 },
             ],
             mode='payment',
-            success_url=YOUR_DOMAIN + '/message',
-            cancel_url=YOUR_DOMAIN + '/message',
+            success_url=YOUR_DOMAIN + '?success=true',
+            cancel_url=YOUR_DOMAIN + '?canceled=true',
             automatic_tax={'enabled': True},
         )
     except Exception as e:
@@ -42,4 +43,4 @@ def create_checkout_session():
     return redirect(checkout_session.url, code=303)
 
 if __name__ == '__main__':
-    app.run(port=3000)
+    app.run(port=4242)
