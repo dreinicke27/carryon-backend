@@ -10,3 +10,4 @@ requests==2.26.0
 stripe==3.0.0
 toml==0.10.2
 Werkzeug==2.0.1
+gunicorn==19.7.1
