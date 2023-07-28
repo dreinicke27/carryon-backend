@@ -5,9 +5,9 @@ checkoutBP = Blueprint("checkout", __name__, url_prefix="/create-checkout-sessio
 
 @checkoutBP.route("", methods=['POST'])
 def create_checkout_session():
-    data = request.json
-    #try to get line items from request rather than here...have to be in the body from the form 
-    line_item_data = data['line_items']
+    # data = request.json
+    # #try to get line items from request rather than here...have to be in the body from the form 
+    # line_item_data = data['line_items']
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=[
