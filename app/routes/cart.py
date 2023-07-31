@@ -1,6 +1,5 @@
 from flask import Blueprint, request, redirect, jsonify
 import stripe
-import boto3
 
 cartBP = Blueprint("cart", __name__, url_prefix="")
 
@@ -8,7 +7,7 @@ cartBP = Blueprint("cart", __name__, url_prefix="")
 def create_checkout_session():
     data = request.json
     # #try to get line items from request rather than here...have to be in the body from the form 
-    line_item_data = data['line_items']
+    print(data)
     # if price == 165, price_key = the one here, else, the other one
     # for loop for each item in line item data, return {
     #    'price': 'price_1NYBhpFzSGyLRwvaltRdFK2s',
