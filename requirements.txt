@@ -2,6 +2,8 @@ alembic==1.5.4
 attrs==20.3.0
 autopep8==1.5.5
 blinker==1.4
+flask==1.1.2
+boto3==1.17.52
 certifi==2021.5.30
 chardet==4.0.0
 charset-normalizer==2.0.12

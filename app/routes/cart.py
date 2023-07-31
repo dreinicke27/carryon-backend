@@ -20,7 +20,7 @@ def create_checkout_session():
             ],
             mode='payment',
             success_url='https://carryon.onrender.com/success',
-            cancel_url='https://carryon.onrender.com/failure',
+            cancel_url='https://carryon.onrender.com/cancel',
             automatic_tax={'enabled': True},
         )
     except Exception as e:
