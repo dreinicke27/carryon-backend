@@ -17,8 +17,8 @@ def create_app():
     if __name__ == '__main__':
          app.run(port=4242)
 
-    from .routes.cart import checkoutBP
-    app.register_blueprint(checkoutBP)
+    from .routes.cart import cartBP
+    app.register_blueprint(cartBP)
 
     return app
 
