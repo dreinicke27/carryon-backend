@@ -2,7 +2,6 @@ import os
 from flask import Flask, request
 import stripe
 from dotenv import load_dotenv
-from flask_dynamo import Dynamo
 
 
 load_dotenv()
