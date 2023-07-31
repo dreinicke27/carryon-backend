@@ -1,14 +1,8 @@
-#! /usr/bin/env python3.6
-
-"""
-server.py
-Stripe Sample.
-Python 3.6 or newer required.
-"""
 import os
-from flask import Flask
+from flask import Flask, request
 import stripe
 from dotenv import load_dotenv
+from flask_dynamo import Dynamo
 
 
 load_dotenv()
@@ -24,7 +18,7 @@ def create_app():
     if __name__ == '__main__':
          app.run(port=4242)
 
-    from .routes.checkout import checkoutBP
+    from .routes.cart import checkoutBP
     app.register_blueprint(checkoutBP)
 
     return app
