@@ -1,13 +1,13 @@
 from flask import Blueprint, request, redirect, jsonify
 import stripe
+from app import db
+from app.models.cart import Cart
+from app.models.product import Product
 
 cartBP = Blueprint("cart", __name__, url_prefix="")
 
 @cartBP.route("/create-checkout-session", methods=['POST'])
 def create_checkout_session():
-    data = request.json
-    # #try to get line items from request rather than here...have to be in the body from the form 
-    print(data)
     # if price == 165, price_key = the one here, else, the other one
     # for loop for each item in line item data, return {
     #    'price': 'price_1NYBhpFzSGyLRwvaltRdFK2s',
@@ -24,8 +24,8 @@ def create_checkout_session():
                 },
             ],
             mode='payment',
-            success_url='https://carryon.onrender.com/success',
-            cancel_url='https://carryon.onrender.com/cancel',
+            success_url='http://localhost:3000/success',
+            cancel_url='http://localhost:3000/cancel',
             automatic_tax={'enabled': True},
         )
     except Exception as e:
@@ -33,30 +33,20 @@ def create_checkout_session():
 
     return redirect(checkout_session.url, code=303)
 
-# @cartBP.route("/")
-# def root():
-#     dynamodb.create_table_cart()
-#     return 'Table created'
-
-# @cartBP.route("/cart/<id>", methods=["POST"])
+# @cartBP.route("/cart", methods=["POST"])
 # def create_cart():
-#     data = request.get_json()
-#     response = dynamodb.write_to_cart_table(data['id'], data['products'])    
-#     if (response['ResponseMetadata']['HTTPStatusCode'] == 200):
-#         return {
-#             'msg': 'Added successfully',
-#         }
-#     return {  
-#         'msg': 'Some error occcured',
-#         'response': response
-#     }
+#   create cart with ip from front end 
 
 # @cartBP.route("/cart/<id>", methods=["GET"])
 # def get_cart(id):
+#   check if cart with that ip address exists with complete=false, if yes, get it 
+#   otherwise, create cart via post request 
 
 # @cartBP.route("/cart/<id>", methods=["DELETE"])
 # def remove_from_cart(id, attributes):
+#   product id from front end
 
-# @cartBP.route("/cart/<id>", methods=["POST"])
+# @cartBP.route("/cart/<id>", methods=["PUT"])
 # def add_to_cart(id):
+#    product id from front end 
 
