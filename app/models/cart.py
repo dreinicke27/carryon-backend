@@ -7,13 +7,20 @@ class Cart(db.Model):
     products = db.relationship("Product", back_populates="cart", lazy=True)
 
     def to_dict(self):
-        products = [product.to_dict() for product in self.products]
-        return {
+        cart_dict = {
             "id": self.id,
             "ip": self.ip,
             "completed": self.completed,
             "products": self.products
         }
+
+        if self.products:
+            cart_dict["products"] = [product.to_dict() for product in self.products]
+        else:
+            cart_dict["products"] = []
+
+        return cart_dict
+
     
     @classmethod
     def from_dict(cls, cart_data):

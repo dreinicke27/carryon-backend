@@ -10,7 +10,7 @@ cartBP = Blueprint("cart", __name__, url_prefix="")
 def create_checkout_session():
     # if price == 165, price_key = the one here, else, the other one
     # for loop for each item in line item data, return {
-    #    'price': 'price_1NYBhpFzSGyLRwvaltRdFK2s',
+    #    'price': 'price_1NW1ZDFzSGyLRwva7FVQsUs5',
     #               'quantity': 1,
     # }
 
@@ -36,51 +36,57 @@ def create_checkout_session():
 @cartBP.route("/cart", methods=["POST"])
 def create_cart():
     request_body = request.get_json()
-    # check if IP is already in with completed == False on front end, 
-    # and decide which call to make (get or post)
 
     new_cart = Cart.from_dict(request_body)
     db.session.add(new_cart)
     db.session.commit()
 
     return {"id": new_cart.id}, 201
-  
+
+@cartBP.route("/cart", methods=["GET"])
+def get_all_carts():
+
+    carts = Cart.query.all()
+
+    cart_response = []
+
+    for cart in carts:
+        cart_response.append(cart.to_dict())
+
+    return jsonify(cart_response), 200
 
 @cartBP.route("/cart/<id>", methods=["GET"])
 def get_cart(id):
-    cart = validate_item(Cart, cart)
+    cart = validate_item(Cart, id)
     
-    return cart.to_dict(), 200
+    return jsonify(cart.to_dict()), 200
 
-@cartBP.route("/cart/<id>", methods=["PUT"])
+@cartBP.route("/cart/<id>/add", methods=["PATCH"])
 def add_to_cart(id):
-#    product id from front end 
     cart = validate_item(Cart, id)
     request_body = request.get_json()
-    # check if IP is already in with completed == False on front end, 
-    # and decide which call to make (get or post)
-    product = request_body["product"]
+    prod_id = request_body["product"]["id"]
+    product = Product.query.get(prod_id)
 
     cart.products.append(product)
-    db.session.add(cart)
     db.session.commit()
 
-    return jsonify({"msg": f"Added product {product.id} to cart {cart.id}"}), 201
+    return jsonify({"msg": f"Added product {prod_id} to cart {cart.id}"}), 201
 
 
-@cartBP.route("/cart/<id>", methods=["DELETE"])
+@cartBP.route("/cart/<id>/remove", methods=["PATCH"])
 def remove_product_from_cart(id):
     cart = validate_item(Cart, id)
 
     request_body = request.get_json()
-    product = request_body["product"]
+    prod_id = request_body["product"]["id"]
+    product = Product.query.get(prod_id)
 
-    # get product from query 
-    Cart.query.filter(Cart.products.id == product.id).delete()
-
+    cart.products.remove(product)
+        
     db.session.commit()
 
-    return jsonify({"msg": f"Removed product {product.id} from cart {cart.id}"}), 201
+    return jsonify({"msg": f"Removed product {prod_id} from cart {cart.id}"}), 201
 
 
 def validate_item(model, item_id):
