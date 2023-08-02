@@ -61,17 +61,25 @@ def get_cart(id):
     
     return jsonify(cart.to_dict()), 200
 
+
+# UPDATE patch back to like before (restaurant example) where it creates a new product and adds it 
 @cartBP.route("/cart/<id>/add", methods=["PATCH"])
 def add_to_cart(id):
     cart = validate_item(Cart, id)
     request_body = request.get_json()
-    prod_id = request_body["product"]["id"]
-    product = Product.query.get(prod_id)
+    # prod_id = request_body["product"]["id"]
+    # product = Product.query.get(prod_id)
 
-    cart.products.append(product)
+    # cart.products.append(product)
+    # db.session.commit()
+
+    product = Product.from_dict(request_body)
+    product.cart = cart
+
+    db.session.add(product)
     db.session.commit()
 
-    return jsonify({"msg": f"Added product {prod_id} to cart {cart.id}"}), 201
+    return jsonify({"msg": f"Created product {product.id} and added to cart {cart.id}"}), 201
 
 
 @cartBP.route("/cart/<id>/remove", methods=["PATCH"])
@@ -79,10 +87,11 @@ def remove_product_from_cart(id):
     cart = validate_item(Cart, id)
 
     request_body = request.get_json()
-    prod_id = request_body["product"]["id"]
+    prod_id = request_body["id"]
     product = Product.query.get(prod_id)
 
     cart.products.remove(product)
+    Product.query.filter_by(id=prod_id).delete()
         
     db.session.commit()
 
