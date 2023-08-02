@@ -76,9 +76,9 @@ def remove_product_from_cart(id):
     product = request_body["product"]
 
     # get product from query 
-    # Cart.query.filter(Cart.products.id == product.id).delete()
+    Cart.query.filter(Cart.products.id == product.id).delete()
 
-    # db.session.commit()
+    db.session.commit()
 
     return jsonify({"msg": f"Removed product {product.id} from cart {cart.id}"}), 201
 
