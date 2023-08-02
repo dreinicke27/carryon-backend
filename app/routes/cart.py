@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, jsonify
+from flask import Blueprint, request, redirect, jsonify, abort, make_response
 import stripe
 from app import db
 from app.models.cart import Cart
@@ -33,20 +33,61 @@ def create_checkout_session():
 
     return redirect(checkout_session.url, code=303)
 
-# @cartBP.route("/cart", methods=["POST"])
-# def create_cart():
-#   create cart with ip from front end 
+@cartBP.route("/cart", methods=["POST"])
+def create_cart():
+    request_body = request.get_json()
+    # check if IP is already in with completed == False on front end, 
+    # and decide which call to make (get or post)
 
-# @cartBP.route("/cart/<id>", methods=["GET"])
-# def get_cart(id):
-#   check if cart with that ip address exists with complete=false, if yes, get it 
-#   otherwise, create cart via post request 
+    new_cart = Cart.from_dict(request_body)
+    db.session.add(new_cart)
+    db.session.commit()
 
-# @cartBP.route("/cart/<id>", methods=["DELETE"])
-# def remove_from_cart(id, attributes):
-#   product id from front end
+    return {"id": new_cart.id}, 201
+  
 
-# @cartBP.route("/cart/<id>", methods=["PUT"])
-# def add_to_cart(id):
+@cartBP.route("/cart/<id>", methods=["GET"])
+def get_cart(id):
+    cart = validate_item(Cart, cart)
+    
+    return cart.to_dict(), 200
+
+@cartBP.route("/cart/<id>", methods=["PUT"])
+def add_to_cart(id):
 #    product id from front end 
+    cart = validate_item(Cart, id)
+    request_body = request.get_json()
+    # check if IP is already in with completed == False on front end, 
+    # and decide which call to make (get or post)
+    product = request_body["product"]
+
+    cart.products.append(product)
+    db.session.add(cart)
+    db.session.commit()
+
+    return jsonify({"msg": f"Added product {product.id} to cart {cart.id}"}), 201
+
+
+@cartBP.route("/cart/<id>", methods=["DELETE"])
+def remove_product_from_cart(id):
+    cart = validate_item(Cart, id)
+
+    request_body = request.get_json()
+    product = request_body["product"]
+
+    # get product from query 
+    # Cart.query.filter(Cart.products.id == product.id).delete()
+
+    # db.session.commit()
+
+    return jsonify({"msg": f"Removed product {product.id} from cart {cart.id}"}), 201
+
+
+def validate_item(model, item_id):
+    try:
+        item_id = int(item_id)
+    except ValueError:
+        return abort(make_response({"message": f"invalid id: {item_id}"}, 400))
+    
+    return model.query.get_or_404(item_id)
 

@@ -3,7 +3,7 @@ from app import db
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     ip = db.Column(db.String)
-    completed = db.Column(db.Integer)
+    completed = db.Column(db.Integer, default=False)
     products = db.relationship("Product", back_populates="cart", lazy=True)
 
     def to_dict(self):
