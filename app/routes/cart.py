@@ -10,19 +10,19 @@ cartBP = Blueprint("cart", __name__, url_prefix="")
 def create_checkout_session():
     request_body = request.get_json()
     products = request_body["products"]
-    line_items = []
+    items = []
     for product in products:
         line_item = {}
         line_item["quantity"] = 1
-        if product.price == 16500:
+        if product["price"] == 165:
             line_item["price"] = 'price_1NYBhpFzSGyLRwvaltRdFK2s'
         else:
             line_item["price"] = 'price_1NW1ZDFzSGyLRwva7FVQsUs5'
-        line_items.append(line_item)
+        items.append(line_item)
 
     try:
         checkout_session = stripe.checkout.Session.create(
-            line_items=line_items,
+            line_items=items,
             mode='payment',
             success_url='https://carryon.onrender.com/success', 
             cancel_url='https://carryon.onrender.com/cancel',
