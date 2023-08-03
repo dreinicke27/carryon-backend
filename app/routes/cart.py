@@ -8,21 +8,21 @@ cartBP = Blueprint("cart", __name__, url_prefix="")
 
 @cartBP.route("/create-checkout-session", methods=['POST'])
 def create_checkout_session():
-    # if price == 165, price_key = the one here, else, the other one
-    # for loop for each item in line item data, return {
-    #    'price': 'price_1NW1ZDFzSGyLRwva7FVQsUs5',
-    #               'quantity': 1,
-    # }
+    request_body = request.get_json()
+    products = request_body["products"]
+    line_items = []
+    for product in products:
+        line_item = {}
+        line_item["quantity"] = 1
+        if product.price == 16500:
+            line_item["price"] = 'price_1NYBhpFzSGyLRwvaltRdFK2s'
+        else:
+            line_item["price"] = 'price_1NW1ZDFzSGyLRwva7FVQsUs5'
+        line_items.append(line_item)
 
     try:
         checkout_session = stripe.checkout.Session.create(
-            line_items=[
-                {
-                    # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                    'price': 'price_1NYBhpFzSGyLRwvaltRdFK2s',
-                    'quantity': 1,
-                },
-            ],
+            line_items=line_items,
             mode='payment',
             success_url='http://localhost:3000/success',
             cancel_url='http://localhost:3000/cancel',
@@ -62,16 +62,10 @@ def get_cart(id):
     return jsonify(cart.to_dict()), 200
 
 
-# UPDATE patch back to like before (restaurant example) where it creates a new product and adds it 
 @cartBP.route("/cart/<id>/add", methods=["PATCH"])
 def add_to_cart(id):
     cart = validate_item(Cart, id)
     request_body = request.get_json()
-    # prod_id = request_body["product"]["id"]
-    # product = Product.query.get(prod_id)
-
-    # cart.products.append(product)
-    # db.session.commit()
 
     product = Product.from_dict(request_body)
     product.cart = cart
@@ -96,6 +90,16 @@ def remove_product_from_cart(id):
     db.session.commit()
 
     return jsonify({"msg": f"Removed product {prod_id} from cart {cart.id}"}), 201
+
+@cartBP.route("/cart/<id>/toggle", methods=["PATCH"])
+def toggle_cart_complete(id):
+    cart = validate_item(Cart, id)
+
+    cart.completed = True
+        
+    db.session.commit()
+
+    return jsonify({"msg": f"Cart {cart.id} completed checkout"}), 201
 
 
 def validate_item(model, item_id):
