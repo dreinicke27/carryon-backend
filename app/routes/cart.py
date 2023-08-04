@@ -44,7 +44,7 @@ def create_cart():
     db.session.add(new_cart)
     db.session.commit()
 
-    return {"id": new_cart.id}, 201
+    return {new_cart.to_dict()}, 201
 
 @cartBP.route("/cart", methods=["GET"])
 def get_all_carts():
