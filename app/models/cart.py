@@ -11,7 +11,7 @@ class Cart(db.Model):
             "id": self.id,
             "ip": self.ip,
             "completed": self.completed,
-            "products": self.products
+            #"products": self.products
         }
 
         if self.products:
