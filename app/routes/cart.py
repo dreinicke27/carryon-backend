@@ -26,8 +26,8 @@ def create_checkout_session():
         checkout_session = stripe.checkout.Session.create(
             line_items=items,
             mode='payment',
-            success_url='https://carryon.onrender.com/success', 
-            cancel_url='https://carryon.onrender.com/cancel',
+            success_url='https://carryon.onrender.com/#/success', 
+            cancel_url='https://carryon.onrender.com/#/cancel',
             automatic_tax={'enabled': True},
         )
     except Exception as e:
