@@ -33,7 +33,8 @@ def create_checkout_session():
     except Exception as e:
         return str(e)
 
-    return redirect(checkout_session.url, code=303)
+    #return redirect(checkout_session.url, code=303)
+    return jsonify(checkout_session.url), 200
 
 @cartBP.route("/cart", methods=["POST"])
 def create_cart():
