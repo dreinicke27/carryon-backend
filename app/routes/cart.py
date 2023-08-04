@@ -8,7 +8,7 @@ from flask_cors import cross_origin
 cartBP = Blueprint("cart", __name__, url_prefix="")
 
 @cartBP.route("/create-checkout-session", methods=['POST'])
-@cross_origin(origin="*",headers=['Content- Type'])
+@cross_origin(origin="*",headers=['Content- Type', 'Authorization'])
 def create_checkout_session():
     request_body = request.get_json()
     products = request_body["products"]

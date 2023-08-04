@@ -14,7 +14,7 @@ migrate = Migrate()
 def create_app():   
 
     stripe.api_key = os.environ.get('STRIPE_TEST_SECRET_KEY')
-    
+
     app = Flask(__name__,
             static_url_path='',
             static_folder='public')
@@ -24,7 +24,7 @@ def create_app():
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_TEST_DATABASE_URI")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("RENDER_DATABASE_URI")
 
     db.init_app(app)
     migrate.init_app(app, db)
