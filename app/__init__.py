@@ -14,12 +14,13 @@ migrate = Migrate()
 def create_app():   
 
     stripe.api_key = os.environ.get('STRIPE_TEST_SECRET_KEY')
-
+    
     app = Flask(__name__,
             static_url_path='',
             static_folder='public')
     
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}})
+    app.config['CORS_HEADERS'] = 'Content-Type'
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

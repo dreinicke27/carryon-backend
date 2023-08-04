@@ -3,10 +3,12 @@ import stripe
 from app import db
 from app.models.cart import Cart
 from app.models.product import Product
+from flask_cors import cross_origin
 
 cartBP = Blueprint("cart", __name__, url_prefix="")
 
 @cartBP.route("/create-checkout-session", methods=['POST'])
+@cross_origin(origin="*",headers=['Content- Type'])
 def create_checkout_session():
     request_body = request.get_json()
     products = request_body["products"]
@@ -61,6 +63,19 @@ def get_cart(id):
     
     return jsonify(cart.to_dict()), 200
 
+@cartBP.route("/cart/ip", methods=["GET"])
+def get_cart_by_ip():
+    try:
+        ip = request.args.get('ip')
+
+        carts = Cart.query.filter_by(ip=ip).filter_by(completed=False).all()
+        cart = carts[0]
+
+        return jsonify(cart.to_dict()), 200
+    
+    except Exception as e:
+        return {"msg": str(e)}, 200
+
 
 @cartBP.route("/cart/<id>/add", methods=["PATCH"])
 def add_to_cart(id):
@@ -100,6 +115,15 @@ def toggle_cart_complete(id):
     db.session.commit()
 
     return jsonify({"msg": f"Cart {cart.id} completed checkout"}), 201
+
+@cartBP.route("/cart/<id>", methods=["DELETE"])
+def delete_cart(id):
+    cart = validate_item(Cart, id)
+
+    db.session.delete(cart)
+    db.session.commit()
+
+    return {"msg": f"Cart {id} successfully deleted"}, 200
 
 
 def validate_item(model, item_id):
