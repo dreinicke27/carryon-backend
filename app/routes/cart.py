@@ -22,10 +22,15 @@ def create_checkout_session():
             line_item["price"] = 'price_1NW1ZDFzSGyLRwva7FVQsUs5'
         items.append(line_item)
 
+
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=items,
             mode='payment',
+            shipping_options=[
+                {"shipping_rate":"shr_1NdHrWFzSGyLRwva0twBMFlt"}, 
+                {"shipping_rate":"shr_1NdHodFzSGyLRwvaQVZXWu8V"}
+            ],
             success_url='https://carryon.onrender.com/#/success', 
             cancel_url='https://carryon.onrender.com/#/cancel',
             automatic_tax={'enabled': True},
